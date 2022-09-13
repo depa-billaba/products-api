@@ -22,7 +22,7 @@ main().catch(err => console.log(err));
 
 async function main () {
   console.log('Start importing');
-  const records = await processData(__dirname + '/raw-data/product.csv');
+  const records = await processData(__dirname + '/../raw-data/product.csv');
   const products = records.map((record) => {
     return {
       id: Number(record[0]),
