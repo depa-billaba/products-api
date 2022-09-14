@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const {parse} = require ('csv-parse');
 const fs = require('fs');
-const Product = require('./Product.js');
+const Product = require('../Product.js');
 
 main().catch(err => console.log(err));
 

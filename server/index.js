@@ -1,16 +1,17 @@
-const Product = require('./Product');
+const Product = require('./database/schemas/Product');
 const express = require('express');
 const morgan = require('morgan');
 
 main().catch(err => console.log(err));
 
 async function main() {
-  const db = await require('./database');
+  const db = await require('./database/database');
   console.log('Connected to database');
 
   const app = express();
   const PORT = process.env.PORT || 8080;
 
+  app.use(morgan('dev'));
 
   app.get('/products', async(req, res) => {
     const page = Number(req.query.page) || 1;
@@ -53,6 +54,6 @@ async function main() {
   })
 
   app.listen(PORT, () => {
-    console.log(`Listening on port ${PORT}`);
+    console.log(`Products service listening on port ${PORT}`);
   })
 }

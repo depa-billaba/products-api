@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const {parse} = require ('csv-parse');
 const fs = require('fs');
-const {Style} = require('./Style.js');
+const {Style} = require('../Style.js');
 
 
 main().catch(err => console.log(err));
