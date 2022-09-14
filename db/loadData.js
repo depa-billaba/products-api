@@ -7,7 +7,8 @@ const processFile = async (filePath) => {
   const parser = fs
     .createReadStream(filePath)
     .pipe(parse({
-      //Options
+      skip_records_with_error: true,
+      columns: true,
     }));
   for await (const record of parser) {
     records.push(record);
