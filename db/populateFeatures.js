@@ -15,18 +15,15 @@ async function main() {
     columns: true,
   }));
 
-  const res = await Product.updateMany({}, {features: []});
-  console.log(res);
+  // const res = await Product.updateMany({}, {features: []});
+  // console.log(res);
+  console.log('Start adding features');
 
   for await (const record of featureParser) {
     const id = record.product_id;
     const feature = {feature: record.feature, value: record.value};
-    const product = await Product.findOne({id});
-    const features = product.features;
-    features.push(feature);
-
-    const res = await Product.updateOne({id}, {features})
-    console.count('Updated features');
+    await Product.updateOne({id: id}, {$push: {features: feature}})
   }
+  console.log('Finish adding features');
 }
 

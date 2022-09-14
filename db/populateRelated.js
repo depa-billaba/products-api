@@ -15,8 +15,7 @@ async function main() {
     columns: true,
   }));
 
-  const res = await Product.updateMany({}, {related: []});
-  console.log(res);
+  console.log('Start updating related');
 
   for await (const record of relatedParser) {
     const id = record.current_product_id;
@@ -24,8 +23,7 @@ async function main() {
     const res = await Product.updateOne(
       {id},
       {$push: {related: item}})
-    console.count('Updated related');
   }
-  console.log('Update complete');
+  console.log('Finish updating related');
 }
 
