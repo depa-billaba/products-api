@@ -15,12 +15,17 @@ async function main() {
     columns: true,
   }));
 
-  const res = await Product.updateMany({}, {styles: []});
-  console.log(res);
 
+  let currId = null;
+  let styles = [];
   for await (const record of styleParser) {
-    const id = record.productId;
-    const product = await Product.findOne({id});
+    const id = Number(record.productId);
+    if(!currId) currId = id;
+    if(currId !== id) {
+      currId = id;
+      await Product.updateOne({id}, {styles: styles})
+      styles = [];
+    }
     const style = {
       style_id: Number(record.id),
       name: record.name,
@@ -30,9 +35,8 @@ async function main() {
       photos: [],
       skus: {},
     }
-    product.styles.push(style);
-    const res = await Product.updateOne({id}, {styles: product.styles})
-    console.count('Updated styles');
+    styles.push(style);
   }
+  console.log('Product styles updated');
 }
 

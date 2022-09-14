@@ -24,14 +24,6 @@ async function main() {
     if(!currId) currId = id;
     if(currId !== id) {
       currId = id;
-      const product = await Product.findOne({styles: {$elemMatch: {style_id: id}}})
-      product.styles.forEach(style => {
-        if(style.style_id === id) {
-          style.photos = photos;
-        }
-      })
-      const res = await Product.updateOne({id: product.id}, {styles: product.styles});
-      console.count('Product style photos updated');
       photos = [];
     }
     photos.push({url: record.url, thumbnail_url: record.thumbnail_url})
