@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const {styleSchema} = require('./Style.js');
 
 const productSchema = new mongoose.Schema({
   id: {

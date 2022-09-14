@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const {parse} = require ('csv-parse');
 const fs = require('fs');
-const Product = require('./Product.js');
+const {Style} = require('./Style.js');
+
 
 main().catch(err => console.log(err));
 
@@ -20,21 +21,16 @@ async function main() {
   let currId = null;
   let skus = {};
   for await (const record of skuParser) {
-    const id = Number(record.styleId);
-    if(!currId) currId = id;
-    if(currId !== id) {
-      currId = id;
-      const product = await Product.findOne({styles: {$elemMatch: {style_id: id}}})
-      product.styles.forEach(style => {
-        if(style.style_id === id) {
-          style.skus = skus;
-        }
-      })
-      const res = await Product.updateOne({id: product.id}, {styles: product.styles});
-      console.count('Product style skus updated');
+    if (!currId) currId = record.styleId;
+    if (currId !== record.styleId) {
+      const res = await Style.updateOne({style_id: currId}, {"$set": {skus: skus}});
       skus = {};
+      currId = record.styleId;
     }
-    skus[record.id] = {size: record.size, quantity: record.quantity}
+    skus[record.id] = {
+      size: record.size,
+      quantity: record.quantity,
+    }
   }
   console.log('Sku update complete');
 }

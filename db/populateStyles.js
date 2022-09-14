@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const {parse} = require ('csv-parse');
 const fs = require('fs');
-const Product = require('./Product.js');
+const {Style} = require('./Style.js');
 
 main().catch(err => console.log(err));
 
@@ -15,27 +15,21 @@ async function main() {
     columns: true,
   }));
 
+  const res = await Style.deleteMany({}); //Clear database
+  console.log(res);
 
-  let currId = null;
-  let styles = [];
   for await (const record of styleParser) {
-    const id = Number(record.productId);
-    if(!currId) currId = id;
-    if(currId !== id) {
-      currId = id;
-      await Product.updateOne({id}, {styles: styles})
-      styles = [];
-    }
     const style = {
-      style_id: Number(record.id),
+      style_id: record.id,
+      productId: record.productId,
       name: record.name,
       original_price: record.original_price,
       sale_price: record.sale_price,
-      'default?': record.default_style === 1,
+      'default?': record.default_style === '1',
       photos: [],
-      skus: {},
+      skus: {}
     }
-    styles.push(style);
+    const res = await new Style(style).save()
   }
   console.log('Product styles updated');
 }
