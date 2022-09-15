@@ -1,16 +1,15 @@
-const Product = require('./database/schemas/Product');
 const express = require('express');
 const morgan = require('morgan');
 const products = require('./models/products');
+require('dotenv').config()
 
 main().catch(err => console.log(err));
 
 async function main() {
-  const db = await require('./database/database');
-  console.log('Connected to database');
 
   const app = express();
   const PORT = process.env.PORT || 8080;
+  console.log(process.env.PORT)
 
   // app.use(morgan('dev'));
 
