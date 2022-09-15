@@ -1,6 +1,7 @@
 const Product = require('./database/schemas/Product');
 const express = require('express');
 const morgan = require('morgan');
+const products = require('./models/products');
 
 main().catch(err => console.log(err));
 
@@ -11,44 +12,51 @@ async function main() {
   const app = express();
   const PORT = process.env.PORT || 8080;
 
-  app.use(morgan('dev'));
+  // app.use(morgan('dev'));
 
   app.get('/products', async(req, res) => {
     const page = Number(req.query.page) || 1;
     let count = Number(req.query.count) || 5;
     if(count > 20) count = 20;
-    const index = (count * page) - count + 1;
-    const products = await Product.find({id: {'$gte': index}}).limit(count);
-    products.forEach(product => {
-      product.styles = undefined;
-      product.related = undefined;
-      product.features = undefined;
-    })
+
+    const response = await products.getPage(page, count);
+    if (response === null) {
+      res.status(404);
+      res.send('Product not found');
+      return;
+    }
     res.status(200);
-    res.send(products);
+    res.send(response);
   })
   app.get('/products/:productId', async (req, res) => {
     const productId = req.params.productId;
-    const product = await Product.findOne({id: productId});
-    product.styles = undefined;
-    product.related = undefined;
+    const product = await products.getOne(productId);
+    if(product === null) {
+      res.status(404);
+      res.send('Product not found')
+      return;
+    }
     res.status(200);
     res.send(product);
   })
   app.get('/products/:productId/styles', async (req, res) => {
     const productId = req.params.productId;
-    const product = await Product.findOne({id: productId});
-    const response = {
-      product_id: productId,
-      results: product.styles,
+    const response = await products.getStyles(productId);
+    if (response === null) {
+      res.status(404);
+      res.send('Product not found');
+      return;
     }
     res.status(200);
     res.send(response);
   })
   app.get('/products/:productId/related', async (req, res) => {
     const productId = req.params.productId;
-    const product = await Product.findOne({id: productId})
-    const response = product.related;
+    const response = await products.getRelated(productId);
+    if (response === null) {
+      res.status(404);
+      res.send('Product not found');
+    }
     res.status(200);
     res.send(response);
   })
