@@ -12,6 +12,7 @@ async function main() {
   console.log(process.env.PORT)
 
   // app.use(morgan('dev'));
+  app.use(express.static(__dirname + '/public'));
 
   app.get('/products', async(req, res) => {
     const page = Number(req.query.page) || 1;
