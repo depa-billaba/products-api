@@ -23,7 +23,6 @@ router.get('/', async(req, res) => {
 router.get('/:productId/styles', async (req, res) => {
   const productId = req.params.productId;
   const response = await products.getStyles(productId);
-  console.log(response);
   if (response === null) {
     res.status(404);
     res.send('Product not found');
